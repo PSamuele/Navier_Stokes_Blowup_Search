@@ -1,5 +1,10 @@
 # Searching for a Navier–Stokes Singularity in a Compressive Axisymmetric Flow
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
+![Stack](https://img.shields.io/badge/Stack-FEniCSx%20%7C%20gmsh%20%7C%20PETSc%20%7C%20MPI-orange)
+![Tests](https://img.shields.io/badge/Tests-50%20regression-green)
+![Environment](https://img.shields.io/badge/Environment-conda-lightgrey)
+
 A vortex ring is driven into a narrowing axisymmetric domain, where the geometry
 compresses it and conservation of angular momentum amplifies the swirl. The
 question is whether that amplification can outrun viscosity into a finite-time

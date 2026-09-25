@@ -1,8 +1,15 @@
 # Convergence — what converged, what did not, and why
 
-The production study, read honestly. Three of five target quantities are not in
-the asymptotic range on these grids; this document says which, by how much, and
-identifies the cause.
+The production study in detail. Two of the five quantities I tracked converge,
+two do not, and one converges only at a low order. This document says which, by
+how much, and why. It also explains two limits on what the study can conclude:
+the vortex ring never reached the pole, and the time stepping is first order.
+
+A short reminder of the terms used here (all are defined in plain words in the
+[main README](../README.md#key-terms)): `h` is the cell size, `p` the observed
+order (how fast the error shrinks as `h` shrinks), GCI the error bar on the
+fine-grid value, and the monotone fraction the share of samples in which the
+three grids move steadily in one direction.
 
 Raw data and per-level provenance are in [`../results/`](../results/). Regenerate
 everything here with:
@@ -67,10 +74,21 @@ the asymptotic range and the extrapolated value is an artefact, not a better
 answer than the fine grid. The same applies, less severely, to peak vorticity at
 75 %.
 
-The two quantities that do converge — kinetic energy at 100 % monotone with a
-0.16 % GCI, and circulation at 92 % with 0.86 % — are the integral ones, dominated
-by the bulk flow. The two that do not are the ones dominated by the sharpest
-feature in the domain. That is not a coincidence.
+The two quantities that do converge, kinetic energy (100 % monotone, 0.16 % GCI)
+and circulation (92 %, 0.86 %), are integrals over the whole flow, so they depend
+mostly on the bulk. The two that do not are peak values at the sharpest feature
+in the domain. The section after next explains why.
+
+### Why the observed orders are close to 1
+
+The time stepping in step 1 of IPCS is implicit Euler, which is first order in
+time: the error it adds shrinks in proportion to `dt`. The time step is set by
+the CFL condition, so `dt` shrinks in proportion to `h` (measured ratio 1.98
+between grids differing by 2). The time error therefore shrinks like `h`, and it
+hides the higher spatial accuracy of the P2 elements. That is consistent with
+`p = 1.00` for circulation, `0.98` for the BKM integral and `1.39` for kinetic
+energy. Measuring the spatial order on its own would need a time step well below
+the CFL limit, or a second-order time scheme (Crank–Nicolson or BDF2).
 
 ## Why: the refinement went to the wrong place
 
@@ -107,7 +125,37 @@ elements give some sub-cell resolution, so this is not catastrophic, but by any
 standard criterion — where one wants of order ten points across a boundary layer —
 the layer is unresolved.
 
-**12,162 cells went to the pole region on the fine grid.** Nothing happens there.
+**12,162 cells went to the pole region on the fine grid.** Nothing happens there,
+and the next section shows why.
+
+## The vortex never reached the pole
+
+This is the most important limit on the physical conclusion. The setup assumed
+the ring would be carried into the narrowing tip, where compression would amplify
+its swirl (`u_θ = Γ/r` grows as `r` shrinks, because circulation `Γ` is nearly
+conserved). The recorded data show this did not happen:
+
+| signal on the fine grid | recorded | what compression to `r = 0.05` would give |
+| :-- | :-- | :-- |
+| `max|u|` | stays between 18.6 and 30.0 (starts at 25.2) | about 100 from the swirl alone (`Γ ≈ 5`, `r = 0.05`) |
+| `max|Γ|` | only decreases, 5.749 → 5.168 | unchanged or slowly decreasing |
+| height of `max|ω|` | never above `|z| = 0.86` | near `|z| = 2` |
+
+The likely cause is the background flow. Its streamfunction
+`ψ_jet = J·r²·(f² − r²)²` is zero on the axis and on the wall, so it is a closed
+loop: up along the axis, back down along the wall. On the axis the upward speed
+is `u_z = 2J·f(z)⁴`:
+
+| `z` | 0 | 0.5 | 1.0 | 1.5 |
+| :-- | --: | --: | --: | --: |
+| `u_z` on the axis | 20 | 8.8 | 0.68 | 0.005 |
+
+The background flow has practically stopped well before the pole, so nothing
+carries the ring into the tip. This comes from the formula and the recorded
+samples; I have not tracked the ring through the saved 3D fields.
+
+So the null result is about a ring that stayed in the middle of the domain. It is
+not a test of a vortex compressed in a cone.
 
 This is the mechanism behind the table above: `max|ω|` and enstrophy are boundary
 layer quantities measured where the mesh is coarse, so they do not converge;
@@ -145,7 +193,7 @@ The kinetic-energy difference grows monotonically with time — 0.05 % → 0.24 
 0.63 % → 1.78 % → 4.66 % — which is ordinary error accumulation, but it means
 "two grids agree over the whole interval" is true to about 5 %, not tightly.
 
-## Energy: the result the study rests on
+## Energy: the check the study relies on
 
 ![Energy decay and the guard](../media/convergence/energy-decay.png)
 
@@ -160,12 +208,37 @@ construction. Counting rising samples:
 
 Medium and fine are **strictly monotone over the entire run**. The guard never
 fired on either. On the coarse grid it fired at `t = 0.2680`, having recorded the
-energy minimum at `t = 0.2631` — which becomes that level's reliable horizon and
+energy minimum at `t = 0.2631`, which becomes that level's reliable horizon and
 therefore the three-grid window above.
 
-The BKM integral ends at **1782.3** (fine) and **1850.3** (medium), bounded and
-agreeing to 3.8 %. A singularity at `T*` requires `∫‖ω‖_∞ dt` to diverge; it does
-not.
+**What this shows and what it does not.** Decreasing energy shows the
+*computation* is consistent with the physics. It is not evidence that the
+*solution* stays smooth: Leray (1934) and Hopf (1951) showed that weak solutions
+of Navier–Stokes always exist and never gain energy, and whether they can still
+become singular is exactly the open question. A blowing-up solution could have
+decreasing energy too.
+
+**A second, independent check: circulation.** With viscosity and zero swirl on
+the boundary, `Γ` obeys a maximum principle: its largest value can only stay the
+same or go down. Counting intervals in which `max|Γ|` rises:
+
+| level | rises | largest rise | comment |
+| :-- | --: | --: | :-- |
+| coarse | 92 / 267 | +61 % | wobbles below 0.1 % early, then jumps 5.28 → 10.17 from `t = 0.2631` to `0.267` |
+| medium | 10 / 550 | +0.03 % | sampling noise |
+| fine | **0 / 550** | — | 5.749 → 5.168 |
+
+The coarse jump starts exactly at the energy guard's reliable horizon, so the two
+checks agree. This one is not yet coded as an automatic stop.
+
+**The BKM integral** ends at **1782.3** (fine) and **1850.3** (medium), 3.8 %
+apart, with differences up to 12.3 % along the way. A singularity at `T*`
+requires `∫‖ω‖_∞ dt` to diverge, and it does not. But this is weak evidence here,
+for two reasons. Any finite computation over a finite time gives a finite
+number; what would matter is the trend, for example `‖ω‖_∞` growing like
+`1/(T* − t)`. And `‖ω‖_∞` sits in the unresolved wall boundary layer and is not
+converged (up to 198 % apart between medium and fine), so the integral mostly
+measures the boundary layer, not a possible singular point inside the flow.
 
 ## The divergence constraint
 
@@ -204,14 +277,20 @@ such extrapolation and bounds the cost automatically.
 
 In descending order of expected value:
 
-1. **Refine the wall rather than the poles.** This addresses the actual cause of
-   the non-convergence. A two-level study costs about 1.7 h of the same instance.
-2. **Method of Manufactured Solutions.** Establishes the formal order of the
+1. **Change the starting flow so the vortex actually reaches the pole.** Without
+   this, the compression mechanism stays untested and the other items only
+   improve error bars. It can be checked cheaply on a coarse mesh by recording
+   where the swirl is largest over time, before spending cloud time.
+2. **Refine the wall rather than the poles.** This addresses the cause of the
+   non-convergence of `max|ω|` and enstrophy. A two-level study costs about 1.7 h
+   of the same instance.
+3. **Second-order time stepping**, so the observed order reflects the spatial
+   accuracy and not the time error.
+4. **Method of Manufactured Solutions.** Establishes the formal order of the
    implementation, which is currently unknown, giving the observed `p` values a
    reference to be judged against. Runs locally in minutes.
-3. A true cusp profile with `α > 1`, if the geometric question is to be revisited.
-4. A parameter sweep in `ν`.
+5. A true cusp profile with `α > 1`, if the geometric question is to be revisited.
+6. A parameter sweep in `ν`.
 
-None of these changes the null result, which rests on quantities that already
-converged. They would change the *error bars* on quantities the study does not
-draw conclusions from.
+Items 2 to 6 would change the error bars. Only item 1 would change what the study
+can say about the physics.

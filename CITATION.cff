@@ -1,6 +1,7 @@
 cff-version: 1.2.0
 title: >-
-  Searching for a Navier-Stokes Singularity in a Compressive Axisymmetric Flow
+  AI-Assisted CFD on the Cloud: A Verification Case Study of Vortex Compression
+  in an Axisymmetric Cone
 message: >-
   If you use this software, the recorded results, or the findings catalogue,
   please cite it as below.
@@ -8,15 +9,19 @@ type: software
 authors:
   - family-names: Paoli
     given-names: Samuele
-repository-code: "https://github.com/PSamuele/navier-stokes-blowup-search"
+repository-code: "https://github.com/PSamuele/Navier_Stokes_Blowup_Search"
 abstract: >-
-  A verification-driven computational search for finite-time singularities in the
-  3D axisymmetric incompressible Navier-Stokes equations, confined to an
-  engineered compressive domain. The study reports a null result: on two
-  independent grids differing by a factor of two in every length, kinetic energy
-  decreases strictly and the Beale-Kato-Majda integral stays bounded out to
-  T = 0.55, with no evidence of singularity-consistent growth. Accompanying the
-  result is a catalogue of five silent failure modes found in two earlier
+  A case study in AI-assisted computational fluid dynamics on rented cloud
+  compute: how far one engineer can get on a hard flow problem when most of the
+  code is written with an AI assistant and the runs are done on AWS, and what it
+  takes to trust the result. The test case is a vortex ring in an axisymmetric
+  domain that narrows to a 6-degree cone, solved with the 3D axisymmetric
+  incompressible Navier-Stokes equations in FEniCSx. On the two finer of three
+  grids the computation stays consistent to T = 0.55 (kinetic energy decreases
+  in every interval, circulation obeys its maximum principle). The vortex ring
+  never reaches the narrowing tip, so the compression mechanism the setup was
+  designed around is not tested, and no claim about singularities is made.
+  Accompanying the result is a catalogue of five silent failure modes found in two earlier
   attempts by the same author - a mesh size field that degenerated to a constant,
   a vorticity diagnostic amplifying round-off by 1e14 on the symmetry axis, a
   breakdown threshold triggered by differentiated sampling noise, a stale
@@ -30,6 +35,8 @@ keywords:
   - computational fluid dynamics
   - Navier-Stokes equations
   - finite-time singularity
+  - AI-assisted development
+  - cloud computing
   - verification and validation
   - grid convergence index
   - axisymmetric flow

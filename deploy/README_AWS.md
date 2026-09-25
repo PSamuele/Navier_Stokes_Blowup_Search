@@ -182,8 +182,12 @@ monotone fraction.
   value is then an artefact, **not** a better answer than the fine grid. Refine further
   before quoting anything.
 * Watch the **BKM integral** `∫ ||omega||_inf dt`. A finite-time singularity at `T*`
-  requires it to diverge; a run where it stays bounded has not blown up, however
-  dramatic the vorticity curve looks. See finding D1 in `../docs/findings.md` for why this
+  requires it to diverge, so a dramatic vorticity curve with a bounded integral is
+  not a blow-up. The converse is weak: any finite run gives a finite integral, so
+  look at its trend, and check that `||omega||_inf` is converged before trusting it.
+* Check **where** `max|omega|` sits (`r_at_max_vorticity`, `z_at_max_vorticity` in the
+  CSV). In the production study it never came near the poles, because the vortex
+  ring never reached them; see `../docs/convergence.md`. See finding D1 in `../docs/findings.md` for why this
   geometry is a cone rather than a cusp, and what that does to the expectation.
 
 ---

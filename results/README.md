@@ -20,9 +20,15 @@ a precondition for Richardson extrapolation to be defined at all.
 Measured refinement ratios from the delivered meshes: **1.985** and **1.969**
 against a nominal 2, so the extrapolation is well conditioned.
 
-Two of the three grids reached `T` with **strictly decreasing kinetic energy** —
-zero rising samples out of 550 on each — and never tripped the energy guard. Only
-the coarse grid broke down, at `t = 0.2631`.
+Two of the three grids reached `T` with **strictly decreasing kinetic energy**
+(zero rising intervals out of 550 on each) and never tripped the energy guard.
+Only the coarse grid broke down, at `t = 0.2631`.
+
+Decreasing energy shows the computation is consistent; it is not evidence against
+a singularity. The data also show that the vortex ring never reached the pole
+(`max|u|` stays between 18.6 and 30.0 on the fine grid), so the compression
+mechanism was not tested. See
+[`docs/convergence.md`](../docs/convergence.md#the-vortex-never-reached-the-pole).
 
 ## What is here
 

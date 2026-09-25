@@ -18,7 +18,8 @@ abstract: >-
   domain that narrows to a 6-degree cone, solved with the 3D axisymmetric
   incompressible Navier-Stokes equations in FEniCSx. On the two finer of three
   grids the computation stays consistent to T = 0.55 (kinetic energy decreases
-  in every interval, circulation obeys its maximum principle). The vortex ring
+  in every interval, circulation obeys its maximum principle to
+  within 0.03 %). The vortex ring
   never reaches the narrowing tip, so the compression mechanism the setup was
   designed around is not tested, and no claim about singularities is made.
   Accompanying the result is a catalogue of five silent failure modes found in two earlier

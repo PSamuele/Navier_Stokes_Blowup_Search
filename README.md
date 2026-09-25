@@ -302,7 +302,7 @@ The production mesh at the pole, with the exact cone drawn on top:
 <td width="33%"><img src="results/convergence_aws/fine/vortex_blowup_fine.gif" alt="Run 3, fine grid"></td>
 </tr>
 <tr>
-<td><b>Run 1.</b> On my laptop, one core, to <code>T = 0.55</code>. Final
+<td><b>Run 1.</b> On a local machine, one core, to <code>T = 0.55</code>. Final
 max |u| = 11.85, which is plausible. Final max |ω| = 3.12 × 10⁶, which is not:
 on that mesh the largest vorticity the cells can represent is about 10³.</td>
 <td><b>Run 2.</b> On AWS, 16 processes, time step adapted to the flow. Meant to
@@ -456,8 +456,8 @@ How to read it:
 - The two quantities that converge (energy and circulation) are *integrals* over
   the whole flow. The two that do not are *peak values* at the sharpest point of
   the flow. The next section explains why.
-- The observed orders are close to 1. This is what I would expect from the time
-  stepping: the scheme is first order in time, and the time step is tied to the
+- For the quantities that converge, the observed orders are between 1.0 and
+  1.4. This is what I would expect from the time stepping: the scheme is first order in time, and the time step is tied to the
   cell size by the CFL condition, so the time error shrinks only in proportion
   to `h`. That hides the higher accuracy of the P2 elements in space. Measuring
   the spatial accuracy on its own would need a smaller time step or a second
@@ -508,7 +508,7 @@ compression would amplify its swirl. The recorded data show this did not happen:
   pushed to `r = 0.05`, its swirl alone would be `u_θ = Γ/r ≈ 100`.
 - **The circulation only decreased**, from 5.749 to 5.168, as viscosity slowly
   wore it down.
-- **The vorticity maximum never went above `|z| = 0.86`**, while the poles are at
+- **The vorticity maximum never went beyond `|z| = 0.87`**, while the poles are at
   `|z| = 2`.
 
 The likely cause is the background flow. Its streamfunction

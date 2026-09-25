@@ -79,7 +79,7 @@ and circulation (92 %, 0.86 %), are integrals over the whole flow, so they depen
 mostly on the bulk. The two that do not are peak values at the sharpest feature
 in the domain. The section after next explains why.
 
-### Why the observed orders are close to 1
+### Why the observed orders are close to 1 (for the converged quantities)
 
 The time stepping in step 1 of IPCS is implicit Euler, which is first order in
 time: the error it adds shrinks in proportion to `dt`. The time step is set by
@@ -139,7 +139,7 @@ conserved). The recorded data show this did not happen:
 | :-- | :-- | :-- |
 | `max|u|` | stays between 18.6 and 30.0 (starts at 25.2) | about 100 from the swirl alone (`Γ ≈ 5`, `r = 0.05`) |
 | `max|Γ|` | only decreases, 5.749 → 5.168 | unchanged or slowly decreasing |
-| height of `max|ω|` | never above `|z| = 0.86` | near `|z| = 2` |
+| height of `max|ω|` | never beyond `|z| = 0.87` (largest: 0.862) | near `|z| = 2` |
 
 The likely cause is the background flow. Its streamfunction
 `ψ_jet = J·r²·(f² − r²)²` is zero on the axis and on the wall, so it is a closed

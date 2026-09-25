@@ -9,7 +9,7 @@ type: software
 authors:
   - family-names: Paoli
     given-names: Samuele
-repository-code: "https://github.com/PSamuele/Navier_Stokes_Blowup_Search"
+repository-code: "https://github.com/PSamuele/Navier_Stokes_CFD_Verification"
 abstract: >-
   A case study in AI-assisted computational fluid dynamics on rented cloud
   compute: how far one engineer can get on a hard flow problem when most of the

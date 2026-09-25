@@ -1,5 +1,11 @@
 # How this was built
 
+This project started as a question about method: how far can one engineer get on
+a hard fluid dynamics problem when most of the code is written with an AI
+assistant (Claude) and the computing power is rented by the hour on AWS, and what
+does it take to trust the answer? This document is about that question. The
+physics is the test case.
+
 Writing the code was the cheap part. That is the whole reason this repository is
 organised around verification rather than around the solver.
 
@@ -124,12 +130,18 @@ document should not be read as one. The relevant defences of the work are:
 - **Comparison against exact answers**: analytic vorticity to 0.27 %, domain
   volume to 1.3e-4
 - **Rank-independence**: identical results on 1, 4, 8 and 16 MPI ranks
-- **A convergence study that reports its own failures** — three of five quantities
-  are flagged as not in the asymptotic range, with the monotone fraction that
-  says so
+- **A convergence study that reports its own failures**: two of five quantities
+  are flagged as not in the asymptotic range and a third as low order, with the
+  monotone fraction that says so
 
 And one honest gap, stated in [`methodology.md`](methodology.md): there is no
 Method of Manufactured Solutions, so the formal order of accuracy of this
 implementation has never been established independently. The observed orders have
 no reference to be judged against. That is the largest remaining hole in the
 verification, and it is not one that transparency about tooling fills.
+
+A second limit is about the physics, not the code. The vortex ring never reached
+the narrowing tip of the domain, because the background flow stops well before
+the pole. So the checks show the computation is sound, but the compression
+mechanism the setup was designed around was never tested. Details in
+[`convergence.md`](convergence.md#the-vortex-never-reached-the-pole).

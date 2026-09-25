@@ -76,8 +76,11 @@ than asserted.
 The module also computes the quantities the theory is actually about, which the
 earlier code never did: enstrophy, circulation `Γ = r·u_θ`, kinetic energy, both
 the strong and weak divergence residual, the location of the vorticity maximum,
-and the running **BKM integral** `∫‖ω‖_∞ dt` — the quantity the Beale–Kato–Majda
-criterion is stated in terms of, and more informative than eyeballing `1/‖ω‖`.
+and the running **BKM integral** `∫‖ω‖_∞ dt`, the quantity the Beale–Kato–Majda
+criterion is stated in terms of. One caution on reading it: any finite run gives a
+finite integral, so what matters is its trend, and it inherits every weakness of
+`‖ω‖_∞`. In this study `‖ω‖_∞` sits in the unresolved wall boundary layer and is
+not converged (see [`convergence.md`](convergence.md)).
 
 ---
 
@@ -160,6 +163,18 @@ catches the onset.
 
 Guarded by `test_energy_guard_stops_an_unphysical_run`.
 
+**What the guard does not tell you.** It checks the computation, not the
+physics. Weak (Leray–Hopf) solutions of Navier–Stokes never gain energy, whether
+or not they later become singular, so a run with decreasing energy is consistent,
+not proven smooth.
+
+**A second invariant of the same kind.** In axisymmetric flow with viscosity and
+zero swirl on the boundary, the circulation `Γ = r·u_θ` obeys a maximum principle:
+`max|Γ|` cannot increase. On the production data it never rises on the fine
+grid, and on the coarse grid it jumps from 5.28 to 10.17 starting exactly at the
+energy guard's reliable horizon (`t = 0.2631`). It is not yet an automatic stop
+in the solver; adding it would cost one more reduction per sample.
+
 **Why this is the most transferable idea here.** It is a conservation law the
 discretisation is *not* constructed to satisfy exactly, used as an independent
 check on the discretisation. Any closed system with a monotone invariant admits
@@ -233,4 +248,10 @@ independently. The observed orders in [`convergence.md`](convergence.md) therefo
 have no reference to be compared against: `p = 1.39` for kinetic energy is
 plausible for a first-order pressure splitting with second-order space, but
 "plausible" is not "verified". This is the single largest gap in the verification,
-and it is cheap to close — MMS runs locally in minutes and needs no cloud time.
+and it is cheap to close: MMS runs locally in minutes and needs no cloud time.
+
+A related limit: the momentum step uses implicit Euler, which is first order in
+time, and the CFL rule ties `dt` to `h`. In a convergence study the time error
+therefore shrinks only like `h`, which caps the observed order near 1 and hides
+the spatial accuracy of the P2 elements. A second-order time scheme, or a time
+step well below the CFL limit, would separate the two.
